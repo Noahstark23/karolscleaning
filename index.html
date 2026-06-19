@@ -826,9 +826,9 @@
   .kc-close{position:absolute;top:-9px;left:-9px;width:23px;height:23px;border-radius:50%;background:#fff;border:1px solid #e7eef2;box-shadow:0 4px 12px rgba(14,90,125,.18);color:#52707d;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
   .kc-close:hover{color:#0e5a7d}
   .kc-char{position:relative;cursor:pointer;line-height:0;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 16px 16px rgba(14,90,125,.26))}
-  .kc-char img{height:300px;width:auto;display:block;animation:kcDance 3.2s ease-in-out infinite;transform-origin:60% 98%}
+  .kc-char img{height:300px;width:auto;display:block;animation:kcGroove 3.8s ease-in-out infinite;transform-origin:60% 99%;will-change:transform;backface-visibility:hidden}
   .kc-char.kc-hop img{animation:kcHop .9s ease}
-  .kc-shadow{position:absolute;left:58%;bottom:4px;width:104px;height:15px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,90,125,.22),transparent 70%);transform:translateX(-50%);animation:kcFloor 3.2s ease-in-out infinite;z-index:-1}
+  .kc-shadow{position:absolute;left:58%;bottom:4px;width:104px;height:15px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,90,125,.22),transparent 70%);transform:translateX(-50%);animation:kcFloor 3.8s ease-in-out infinite;z-index:-1}
   .kc-spark{position:absolute;color:#e9b872;pointer-events:none;animation:kcTwinkle 2.2s ease-in-out infinite;font-size:16px}
   .kc-spark.a{top:4px;right:4px}
   .kc-spark.b{top:66px;left:-8px;font-size:12px;color:#7cc6ec;animation-delay:.7s}
@@ -838,8 +838,17 @@
   .kc-reopen[hidden]{display:none}
   @keyframes kcPop{0%{transform:scale(.85) translateY(6px)}60%{transform:scale(1.02)}100%{transform:none}}
   @keyframes kcDance{0%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-3px)}100%{transform:rotate(-3deg)}}
-  @keyframes kcHop{0%{transform:translateY(0) rotate(-3deg)}30%{transform:translateY(-24px) rotate(2deg)}58%{transform:translateY(0) rotate(-1deg)}80%{transform:translateY(-7px) rotate(1deg)}100%{transform:translateY(0) rotate(-3deg)}}
-  @keyframes kcFloor{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.5}50%{transform:translateX(-50%) scaleX(.84);opacity:.34}}
+  /* Groove orgánico: rebote + balanceo + inclinación de cuerpo + squash/stretch (que preserva volumen) para que no parezca recorte plano */
+  @keyframes kcGroove{
+    0%   {transform:translateY(0)    rotate(-2.4deg) skewX(1.1deg)  scale(1,1)}
+    18%  {transform:translateY(-3px) rotate(-1deg)   skewX(.2deg)   scale(.99,1.014)}
+    38%  {transform:translateY(-6px) rotate(1.6deg)  skewX(-1deg)   scale(1.006,1.002)}
+    55%  {transform:translateY(-7px) rotate(2.5deg)  skewX(-1.4deg) scale(.994,1.01)}
+    74%  {transform:translateY(-3px) rotate(.8deg)   skewX(.3deg)   scale(1.01,.994)}
+    100% {transform:translateY(0)    rotate(-2.4deg) skewX(1.1deg)  scale(1,1)}
+  }
+  @keyframes kcHop{0%{transform:translateY(0) rotate(-2.4deg) scale(1,1)}14%{transform:translateY(3px) rotate(0deg) scale(1.05,.93)}42%{transform:translateY(-26px) rotate(2deg) scale(.96,1.06)}62%{transform:translateY(0) rotate(-1deg) scale(1.06,.92)}80%{transform:translateY(-7px) rotate(1deg) scale(.99,1.01)}100%{transform:translateY(0) rotate(-2.4deg) scale(1,1)}}
+  @keyframes kcFloor{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.5}55%{transform:translateX(-50%) scaleX(.8);opacity:.32}}
   @keyframes kcTwinkle{0%,100%{opacity:.18;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(40deg)}}
   @keyframes kcPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
   @media(prefers-reduced-motion:reduce){.kc-char img,.kc-spark,.kc-reopen,.kc-eyebrow .dot{animation:none}}
