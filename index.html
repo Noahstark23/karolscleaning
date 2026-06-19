@@ -825,15 +825,13 @@
   .kc-btn.ghost:hover{background:#dcf0fb}
   .kc-close{position:absolute;top:-9px;left:-9px;width:23px;height:23px;border-radius:50%;background:#fff;border:1px solid #e7eef2;box-shadow:0 4px 12px rgba(14,90,125,.18);color:#52707d;cursor:pointer;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
   .kc-close:hover{color:#0e5a7d}
-  .kc-char{position:relative;cursor:pointer;line-height:0;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 16px 16px rgba(14,90,125,.26))}
-  .kc-char img{height:300px;width:auto;display:block;animation:kcGroove 3.8s ease-in-out infinite;transform-origin:60% 99%;will-change:transform;backface-visibility:hidden}
-  /* Video 3D de Karol: retrato vivo con bordes redondeados y base difuminada para que el fondo se funda con la página (sin caja dura) */
-  .kc-char video{height:322px;width:auto;display:block;background:transparent;
-    -webkit-mask-image:radial-gradient(168% 158% at 50% 47%,#000 84%,transparent 100%);
-            mask-image:radial-gradient(168% 158% at 50% 47%,#000 84%,transparent 100%);
-    animation:kcBob 3.8s ease-in-out infinite;transform-origin:50% 100%;will-change:transform;backface-visibility:hidden}
-  .kc-char.kc-hop img{animation:kcHop .9s ease}
-  .kc-char.kc-hop video{animation:kcVidHop .82s ease}
+  .kc-char{position:relative;cursor:pointer;line-height:0;-webkit-tap-highlight-color:transparent;filter:drop-shadow(0 18px 20px rgba(14,90,125,.28))}
+  /* halo suave premium detrás de Karol */
+  .kc-char::before{content:"";position:absolute;left:50%;top:44%;width:122%;height:82%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(125,198,236,.26),rgba(125,198,236,.08) 45%,transparent 70%);z-index:-1;pointer-events:none}
+  /* Karol animada (WebP transparente) flotando, sin fondo */
+  .kc-char .kc-video{display:block;line-height:0}
+  .kc-char .kc-video img{height:330px;width:auto;display:block;animation:kcBob 3.8s ease-in-out infinite;transform-origin:50% 100%;will-change:transform;backface-visibility:hidden}
+  .kc-char.kc-hop .kc-video img{animation:kcVidHop .82s ease}
   .kc-shadow{position:absolute;left:58%;bottom:4px;width:104px;height:15px;border-radius:50%;background:radial-gradient(ellipse,rgba(14,90,125,.22),transparent 70%);transform:translateX(-50%);animation:kcFloor 3.8s ease-in-out infinite;z-index:-1}
   .kc-spark{position:absolute;color:#e9b872;pointer-events:none;animation:kcTwinkle 2.2s ease-in-out infinite;font-size:16px}
   .kc-spark.a{top:4px;right:4px}
@@ -860,9 +858,9 @@
   @keyframes kcFloor{0%,100%{transform:translateX(-50%) scaleX(1);opacity:.5}55%{transform:translateX(-50%) scaleX(.8);opacity:.32}}
   @keyframes kcTwinkle{0%,100%{opacity:.18;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(40deg)}}
   @keyframes kcPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.5)}70%{box-shadow:0 0 0 7px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
-  @media(prefers-reduced-motion:reduce){.kc-char img,.kc-char video,.kc-spark,.kc-reopen,.kc-eyebrow .dot{animation:none}}
+  @media(prefers-reduced-motion:reduce){.kc-char .kc-video img,.kc-spark,.kc-reopen,.kc-eyebrow .dot{animation:none}}
   @media(prefers-reduced-motion:reduce){.kc-shadow{animation:none}}
-  @media(max-width:560px){.kc-char img,.kc-char video{height:220px}.kc-bubble{max-width:194px}.kc-guide{right:2px;bottom:0;max-width:240px}.kc-reopen{right:12px;bottom:80px;width:54px;height:54px}.kc-shadow{width:74px}}
+  @media(max-width:560px){.kc-char .kc-video img{height:238px}.kc-bubble{max-width:194px}.kc-guide{right:2px;bottom:0;max-width:240px}.kc-reopen{right:12px;bottom:80px;width:54px;height:54px}.kc-shadow{width:74px}}
 </style>
 
 <div class="kc-guide" id="kcGuide">
@@ -874,7 +872,7 @@
   </div>
   <div class="kc-char" id="kcChar" role="button" tabindex="0" aria-label="Karol">
     <span class="kc-spark a">&#10022;</span><span class="kc-spark b">&#10022;</span><span class="kc-spark c">&#10022;</span>
-    <video class="kc-video" src="karol.mp4" poster="karol_poster.jpg" autoplay muted loop playsinline preload="auto" disablepictureinpicture aria-label="Karol, tu asistente de limpieza"></video>
+    <picture class="kc-video"><source type="image/webp" srcset="karol.webp"><img src="karol_poster.jpg" alt="Karol, tu asistente de limpieza" draggable="false"></picture>
     <span class="kc-shadow"></span>
   </div>
 </div>
@@ -945,17 +943,10 @@
   new MutationObserver(function(){render(current);}).observe(document.body,{attributes:true,attributeFilter:['class']});
   setTimeout(function(){render('intro');onScroll();resetIdle();},1100);
   setInterval(function(){if(!guide.classList.contains('kc-hidden'))hop();},6000);
-  // Video de Karol: asegurar autoplay en móviles y respetar "reducir movimiento"
-  var kv=charEl.querySelector('video');
-  if(kv){
-    var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(reduce){kv.removeAttribute('autoplay');kv.pause();}
-    else{
-      var tryPlay=function(){var p=kv.play();if(p&&p.catch)p.catch(function(){});};
-      tryPlay();
-      document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPlay();});
-      ['touchstart','click'].forEach(function(ev){document.addEventListener(ev,tryPlay,{once:true,passive:true});});
-    }
+  // Karol (WebP animado): respetar "reducir movimiento" mostrando el póster estático
+  var kv=charEl.querySelector('.kc-video');
+  if(kv && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var srcEl=kv.querySelector('source'); if(srcEl) srcEl.parentNode.removeChild(srcEl);
   }
 })();
 </script>
